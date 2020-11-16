@@ -14,7 +14,8 @@ public enum MedidaContagem {
 	PACOTE("Pacote"),
 	KG("Kilograma"),
 	L("Litro"),
-	MACO("Maço");
+	MACO("Maço"),
+	NOT_SET("Não informado");
 
 	private String medida;
 	

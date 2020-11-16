@@ -23,9 +23,9 @@ public class Pedido {
 	@ManyToMany
 	private List<Produto> itens = new ArrayList<>();
 	
-	public BigDecimal totalizar() {
-		
-		//TODO criar o método de totalização
-		return null;
+	public BigDecimal trazerTotal() {
+		BigDecimal total = new BigDecimal(0.00);
+		itens.forEach(produto -> total.add(produto.getPrecoVenda()));
+		return total;
 	}
 }

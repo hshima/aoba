@@ -7,19 +7,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-@Entity @Data @EqualsAndHashCode(callSuper=false)
-public class Cliente extends Pessoa {
+@Entity @Data
+public class Associacao {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-
-	@ManyToMany
-	private List<Pedido> pedidos = new ArrayList<>();
+	@OneToMany(mappedBy = "id")
+	List<Produtor> produtores = new ArrayList<>();
+	private String regiao;
 	
 }

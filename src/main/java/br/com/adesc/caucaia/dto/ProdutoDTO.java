@@ -1,7 +1,6 @@
 package br.com.adesc.caucaia.dto;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +13,7 @@ import javax.persistence.ManyToMany;
 import br.com.adesc.caucaia.model.MedidaContagem;
 import br.com.adesc.caucaia.model.Produto;
 import br.com.adesc.caucaia.model.Produtor;
+import br.com.adesc.caucaia.repository.ProdutoRepository;
 import lombok.Data;
 
 @Data
@@ -43,9 +43,13 @@ public class ProdutoDTO {
 		this.quantidade = produto.getQuantidade();
 	}
 
-	public static List<ProdutoDTO> converter(List<Produto> produtos) {
+	public static List<ProdutoDTO> listConverter(List<Produto> produtos) {
 		return produtos.stream()
 				.map(ProdutoDTO::new)
 				.collect(Collectors.toList());
+	}
+	
+	public Produto toProduto(ProdutoRepository repository) {
+		return repository.findById(id).get();
 	}
 }

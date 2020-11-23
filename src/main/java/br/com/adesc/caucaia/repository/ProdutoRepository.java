@@ -15,4 +15,6 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
 	List<Produto> findByDeletedNot(boolean b);
 
+	Optional<List<Produto>> findByDeletedNotAndNomeContaining(boolean b, String menu);
+
 }

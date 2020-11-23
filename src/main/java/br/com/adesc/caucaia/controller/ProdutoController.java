@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -37,13 +39,12 @@ public class ProdutoController {
 	ProdutorService produtorService;
 	
 	@GetMapping
-	public List<ProdutoDTO> showMenu(String menu) {
+	public List<ProdutoDTO> showMenu(@RequestParam(name = "menu", required = false) String menu) {
 		List<Produto> produtos = new ArrayList<>();
 		if (menu == null) {
 			produtos = produtoRepository.findByDeletedNot(true);
 		} else {
-			System.out.println("GetMapping Sem argumentos");
-			Optional<List<Produto>> optional = produtoRepository.findByNomeContaining(menu);
+			Optional<List<Produto>> optional = produtoRepository.findByDeletedNotAndNomeContaining(true, menu);
 			if (optional.isPresent()) {
 				produtos = optional.get(); 
 			}
@@ -83,17 +84,14 @@ public class ProdutoController {
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<ProdutoDTO> update(
-			@PathVariable Long id, 
-//			@RequestBody @Valid ProdutoToUpdate produtoToUpdate 
+			@PathVariable Long id,
 			@RequestBody @Valid ProdutoDTO produtoToUpdate
 			){
 		
 		Optional<Produto> optional = produtoRepository.findById(id);
 		
 		if(optional.isPresent()) {
-			Produto produto = produtoToUpdate.update(id, produtoRepository);
-			//TODO Implement update
-			
+			Produto produto = produtoToUpdate.update(id, produtoRepository);			
 			return ResponseEntity
 					.ok(new ProdutoDTO(produto));
 		}

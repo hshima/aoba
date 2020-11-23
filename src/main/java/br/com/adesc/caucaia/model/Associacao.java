@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import lombok.Data;
@@ -22,4 +21,9 @@ public class Associacao {
 	List<Produtor> produtores = new ArrayList<>();
 	private String regiao;
 	
+	
+
+	public Associacao(String regiao) {
+		this.regiao = regiao;
+	}
 }

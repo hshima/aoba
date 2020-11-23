@@ -25,7 +25,7 @@ public class Pedido {
 	
 	public BigDecimal trazerTotal() {
 		BigDecimal total = new BigDecimal(0.00);
-		itens.forEach(produto -> total.add(produto.getPrecoVenda()));
+		itens.forEach(produto -> total.add(produto.getPrecos().getPrecoVenda()));
 		return total;
 	}
 }

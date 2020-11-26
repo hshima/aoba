@@ -1,28 +1,29 @@
 package br.com.adesc.caucaia.controller;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.adesc.caucaia.dto.ProdutoDTO;
+import br.com.adesc.caucaia.event.CreateResourceEvent;
 import br.com.adesc.caucaia.model.Produto;
 import br.com.adesc.caucaia.model.Produtor;
 import br.com.adesc.caucaia.repository.ProdutoRepository;
@@ -33,10 +34,13 @@ import br.com.adesc.caucaia.service.ProdutorService;
 public class ProdutoController {
 	
 	@Autowired
-	ProdutoRepository produtoRepository;
+	private ProdutoRepository produtoRepository;
 	
 	@Autowired
-	ProdutorService produtorService;
+	private ProdutorService produtorService;
+	
+	@Autowired
+	private ApplicationEventPublisher publisher;
 	
 	@GetMapping
 	public List<ProdutoDTO> showMenu(@RequestParam(name = "menu", required = false) String menu) {
@@ -63,21 +67,20 @@ public class ProdutoController {
 	@Transactional
 	public ResponseEntity<ProdutoDTO> createProduto(
 			@RequestBody @Valid ProdutoDTO produtoDTO,
-			UriComponentsBuilder uriBuilder
+			HttpServletResponse response
 			){
 		
 		Produto produto = produtoDTO.toProduto();
 		Optional<Produtor> optional = produtorService.validateProdutor(produto.getProdutor());
 		if(optional.isPresent()) produto.setProdutor(optional.get());
 		
-		produtoRepository.save(produto);
+		Produto p = produtoRepository.save(produto);
+		Long id = p.getId();
 		
-		URI uri = uriBuilder
-				.path("/produto/{id}")
-				.buildAndExpand(produto.getId())
-				.toUri();
+		publisher.publishEvent(new CreateResourceEvent(this, response, id));		
+		
 		return ResponseEntity
-				.created(uri)
+				.status(HttpStatus.CREATED)
 				.body(new ProdutoDTO(produto));
 	}
 	

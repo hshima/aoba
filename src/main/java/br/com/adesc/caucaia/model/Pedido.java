@@ -28,4 +28,10 @@ public class Pedido {
 		itens.forEach(produto -> total.add(produto.getPrecos().getPrecoVenda()));
 		return total;
 	}
+
+	public Pedido(Long id, Cliente cliente, List<Produto> itens) {
+		this.id = id;
+		this.cliente = cliente;
+		this.itens = itens;
+	}
 }
